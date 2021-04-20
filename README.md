@@ -1,6 +1,8 @@
 # mini observability stack
 
-## Play
+Purpose of these repository is to aggregate prometheus-operator (using kube-prometheus jsonnet) with grafana stack with grafana Loki, grafana Tempo, grafana Agent and Grafana. Making it easy to demonstrate how grafana prometheus observability works using examples like hotROD and TNS.
+
+## Let's Play
 
 We need an ingress and add new entries in /etc/hosts
 
@@ -27,21 +29,19 @@ Add it to `/etc/hosts`
 ./apply.sh
 ```
 
-## Examples
-
-### rothod
+## Examples: hotROD
 
 Deploy it:
 ```
-kubectl apply -f examples/rothod-example.yaml
+kubectl apply -f examples/hotrod-example.yaml
 ```
 
 To remove:
 ```sh
-kubectl delete -f examples/rothod-example.yaml
+kubectl delete -f examples/hotrod-example.yaml
 ```
 
-Access rothod application using port-forward:
+Access hotrod application using port-forward:
 ```
 kubectl port-forward -n default $(kubectl get pods -n default -l 'app.kubernetes.io/component=hotrod' |grep example |awk '{print $1}') 8080
 ```
@@ -52,7 +52,7 @@ Access [grafana-local](http://grafana.example.local) and using `admin` and `stro
 
 In Explore: `{namespace="default",container="example-hotrod"}` and search for trace_id in one log line and click on it. Then click on "Tempo" button there.
 
-### tns application example
+## Examples: TNS 
 
 Deploy TNS application
 ```sh
@@ -64,16 +64,16 @@ To remove:
 kubectl delete -f examples/tns-manifests.yaml
 ```
 
-#### Explore TNS
+### Explore TNS
 
-##### Metrics -> Logs -> Traces
+#### Metrics -> Logs -> Traces
 - Go to the TNS [Demo App Dashboard](http://grafana.example.local/d/62440ddb0b6b14e05c6cdd3940eda2d1/demo-app?orgId=1&refresh=10s)
 - Zoom in on a section with failed requests if you are so inclined
 - Panel Drop Down -> Explore
 - Datasource Drop Down -> Loki
 - Choose a log line with a traceID -> Tempo
 
-##### LogQLV2
+#### LogQLV2
 - Go to [Explore Tab Logs](http://grafana.example.local/explore?orgId=1&left=%5B%22now-1h%22,%22now%22,%22loki%22,%7B%22exemplar%22:true,%22expr%22:%22%22%7D%5D)
 - Choose Datasource Loki
 - Run this query `{job="tns/app"} |json |line_format "{{.log}}" |logfmt | status>=500 and status <=599 and duration > 50ms`
@@ -81,7 +81,7 @@ kubectl delete -f examples/tns-manifests.yaml
 
 [Explore Tab Logs with line above](http://grafana.example.local/explore?orgId=1&left=%5B%22now-1h%22,%22now%22,%22loki%22,%7B%22expr%22:%22%7Bjob%3D%5C%22tns%2Fapp%5C%22%7D%20%7Cjson%20%7Cline_format%20%5C%22%7B%7B.log%7D%7D%5C%22%20%7Clogfmt%20%7C%20status%3E%3D500%20and%20status%20%3C%3D599%20and%20duration%20%3E%2050ms%22%7D%5D)
 
-##### Metrics -> Traces -> Logs
+#### Metrics -> Traces -> Logs
 - Go to [Explore Tab Metrics](http://grafana.example.local/explore?orgId=1&left=%5B%22now-1h%22,%22now%22,%22thanos%22,%7B%22exemplar%22:true%7D%5D)
 - Choose Datasource thanos
 - Run this query `histogram_quantile(.99, sum(rate(tns_request_duration_seconds_bucket{}[1m])) by (le))`
@@ -149,3 +149,6 @@ https://github.com/grafana/tempo
 https://github.com/grafana/loki  
 
 https://github.com/grafana/helm-charts/tree/main/charts  
+
+https://github.com/jaegertracing/jaeger/tree/master/examples/hotrod   
+
