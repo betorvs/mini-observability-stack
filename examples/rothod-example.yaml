@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: example-hotrod
+  namespace: default
+  labels:
+    app.kubernetes.io/component: hotrod
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: hotrod
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/component: hotrod
+    spec:
+      containers:
+        - name: example-hotrod
+          image: betorvs/hotrod-example:test1
+          env:
+            - name: JAEGER_AGENT_HOST
+              value: grafana-agent-traces.default.svc.cluster.local
+            - name: JAEGER_AGENT_PORT
+              value: "6831"
+          ports:
+            - name: http
+              containerPort: 8080
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http

@@ -1,0 +1,30 @@
+--- manifests-example.local/node-exporter-daemonset_orig.yaml	2021-04-20 14:45:19.000000000 +0200
++++ manifests-example.local/node-exporter-daemonset.yaml	2021-04-20 14:45:38.000000000 +0200
+@@ -46,10 +46,10 @@
+           mountPropagation: HostToContainer
+           name: sys
+           readOnly: true
+-        - mountPath: /host/root
+-          mountPropagation: HostToContainer
+-          name: root
+-          readOnly: true
++        # - mountPath: /host/root
++        #   mountPropagation: HostToContainer
++        #   name: root
++        #   readOnly: true
+       - args:
+         - --logtostderr
+         - --secure-listen-address=[$(IP)]:9100
+@@ -91,9 +91,9 @@
+       - hostPath:
+           path: /sys
+         name: sys
+-      - hostPath:
+-          path: /
+-        name: root
++      # - hostPath:
++      #     path: /
++      #   name: root
+   updateStrategy:
+     rollingUpdate:
+       maxUnavailable: 10%
