@@ -2,6 +2,8 @@
 
 Purpose of these repository is to aggregate prometheus-operator (using kube-prometheus jsonnet) with grafana stack with grafana Loki, grafana Tempo, grafana Agent and Grafana. Making it easy to demonstrate how grafana prometheus observability works using examples like hotROD and TNS.
 
+Then you can use this to create your own service monitors, prometheus rules and grafana dashboards. 
+
 ## Let's Play
 
 We need an ingress and add new entries in /etc/hosts

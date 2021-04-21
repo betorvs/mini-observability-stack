@@ -4,6 +4,7 @@ kubectx docker-desktop
 
 DEPLOYDIR="deploy"
 
+kubectl delete -f examples/
 kubectl delete -f $DEPLOYDIR/loki-manifests.yaml
 kubectl delete -f $DEPLOYDIR/promtail-manifests.yaml
 kubectl delete -f $DEPLOYDIR/tempo-manifests.yaml
