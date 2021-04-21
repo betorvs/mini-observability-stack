@@ -4,6 +4,8 @@ Purpose of these repository is to aggregate prometheus-operator (using kube-prom
 
 Then you can use this to create your own service monitors, prometheus rules and grafana dashboards. 
 
+Tested on: Docker for MAC v3.3.0 with Kubernetes enabled v1.19.7
+
 ## Let's Play
 
 We need an ingress and add new entries in /etc/hosts
