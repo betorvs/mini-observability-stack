@@ -1,6 +1,28 @@
 # mini observability stack
 
-Purpose of these repository is to aggregate prometheus-operator (using kube-prometheus jsonnet) with grafana stack with grafana Loki, grafana Tempo, grafana Agent and Grafana. Making it easy to demonstrate how grafana prometheus observability works using examples like hotROD and TNS.
+## Table of Contents
+- [Overview](#overview)
+- [Let's Play](#let's-play)
+  - [Ingress](#ingress)
+  - [How to access it](#how-to-access-it)
+  - [Apply](#apply)
+- [Examples: hotROD](#examples:-hotrod)
+- [Examples: TNS](#examples:-tns)
+  - [Explore TNS](#explore-TNS)
+    - [Metrics -> Logs -> Traces](#Metrics-->-Logs-->-Traces)
+    - [LogQLV2](#LogQLV2)
+    - [Metrics -> Traces -> Logs](#Metrics-->-Traces-->-Logs)
+  - [Remove all](#Remove-all)
+- [Building steps](#Building-steps)
+  - [Update helm charts and jsonnet](#Update-helm-charts-and-jsonnet)
+  - [Build](#Build)
+  - [Apply and check](#Apply-and-check)
+  - [Remove](#Remove)
+- [References](#References)
+
+## Overview
+
+Purpose of these repository is to aggregate prometheus-operator (using kube-prometheus jsonnet) with grafana stack with grafana Loki, grafana Tempo, grafana Agent and Grafana. Making it easy to demonstrate how grafana/prometheus observability works using examples like hotROD and TNS.
 
 Then you can use this to create your own service monitors, prometheus rules and grafana dashboards. 
 
@@ -31,6 +53,23 @@ Add it to `/etc/hosts`
 
 ```sh
 ./apply.sh
+```
+
+If you want to check, please run `kubectl`:
+```
+$ kubectl get pods --all-namespaces | egrep -v "kube-system|ingress"
+NAMESPACE       NAME                                        READY   STATUS      RESTARTS   AGE
+default         grafana-85bcb4f4cf-n5pqc                    2/2     Running     0          8m14s
+default         grafana-agent-traces-57bgj                  1/1     Running     0          8m17s
+logging         loki-0                                      1/1     Running     0          8m21s
+logging         promtail-9jtjf                              1/1     Running     0          8m21s
+monitoring      alertmanager-main-0                         2/2     Running     0          8m20s
+monitoring      kube-state-metrics-76f6cb7996-gdggq         3/3     Running     0          8m28s
+monitoring      node-exporter-42d6s                         2/2     Running     0          8m27s
+monitoring      prometheus-adapter-59df95d9f5-rxcfc         1/1     Running     0          8m26s
+monitoring      prometheus-k8s-0                            2/2     Running     0          8m19s
+monitoring      prometheus-operator-7775c66ccf-562ps        2/2     Running     0          8m35s
+tracing         tempo-0                                     2/2     Running     0          8m18s
 ```
 
 ## Examples: hotROD
@@ -94,51 +133,68 @@ kubectl delete -f examples/tns-manifests.yaml
 
 [Explore Tab Metrics with histogram](http://grafana.example.local/explore?orgId=1&left=%5B%22now-1h%22,%22now%22,%22thanos%22,%7B%22exemplar%22:true,%22expr%22:%22histogram_quantile(.99,%20sum(rate(tns_request_duration_seconds_bucket%7B%7D%5B1m%5D))%20by%20(le))%22,%22requestId%22:%22Q-6a284ac1-9aff-4be3-97f2-0b10b1518efc-0A%22%7D%5D)
 
+### Remove all
+
+```sh
+./remove.sh
+```
+
+
 ## Building steps
 
-## Build
+Required softwares:
+- helm 3
+- kubectl and kubectx
+- jsonnet (go get github.com/jsonnet-bundler/jsonnet-bundler/cmd/jb)
+- gojsontoyaml (go get github.com/brancz/gojsontoyaml)
+- docker-desktop with kubernetes enabled (can be minu-kube, not tested yet)
 
-```
-cp namespaces/namespaces.yaml deploy/
-cp grafana/agent/agent-tempo.yaml deploy/
-helm template --release-name grafana --namespace default -f grafana/grafana/values.yaml ./grafana/charts/grafana > deploy/grafana-manifests.yaml
-helm template --release-name loki --namespace logging -f grafana/loki/values.yaml ./grafana/charts/loki > deploy/loki-manifests.yaml
-helm template --release-name promtail --namespace logging -f grafana/loki/values-promtail.yaml ./grafana/charts/promtail > grafana/loki/promtail-manifests.yaml
-kustomize build grafana/loki/ > deploy/promtail-manifests.yaml
-helm template --release-name tempo --namespace tracing -f grafana/tempo/values.yaml ./grafana/charts/tempo > grafana/tempo/tempo-manifests.yaml
-kustomize build grafana/tempo/ > deploy/tempo-manifests.yaml
-./kube-prometheus/build.sh
-cp -r kube-prometheus/manifests-example.local deploy/prometheus
+### Update helm charts and jsonnet
+
+```sh
+./update.sh
 ```
 
-## Applying
+After upgrade all helm charts and jsonnet vendor directory, try to build it again.
 
-```
-kubectl apply -f deploy/namespaces.yaml
-kubectl apply -f deploy/prometheus/setup/
-kubectl apply -f deploy/prometheus/
-kubectl apply -f deploy/loki-manifests.yaml
-kubectl apply -f deploy/promtail-manifests.yaml
-kubectl apply -f deploy/tempo-manifests.yaml
-kubectl apply -f deploy/agent-tempo.yaml
-kubectl apply -f deploy/grafana-manifests.yaml
+### Build
+
+```sh
+./build.sh
 ```
 
-## Deleting it
+### Apply and check
 
-```
-kubectl delete -f deploy/promtail-manifests.yaml
-kubectl delete -f deploy/agent-tempo.yaml
-kubectl delete -f deploy/grafana-manifests.yaml
-kubectl delete -f deploy/loki-manifests.yaml
-kubectl delete -f deploy/tempo-manifests.yaml
-kubectl delete -f deploy/prometheus/
-kubectl delete -f deploy/prometheus/setup/
-kubectl delete -f deploy/namespaces.yaml
+```sh
+./apply.sh
 ```
 
+You should have these pods deployed:
+```
+$ kubectl get pods --all-namespaces | egrep -v "kube-system|ingress"
+NAMESPACE       NAME                                        READY   STATUS      RESTARTS   AGE
+default         grafana-85bcb4f4cf-n5pqc                    2/2     Running     0          8m14s
+default         grafana-agent-traces-57bgj                  1/1     Running     0          8m17s
+logging         loki-0                                      1/1     Running     0          8m21s
+logging         promtail-9jtjf                              1/1     Running     0          8m21s
+monitoring      alertmanager-main-0                         2/2     Running     0          8m20s
+monitoring      kube-state-metrics-76f6cb7996-gdggq         3/3     Running     0          8m28s
+monitoring      node-exporter-42d6s                         2/2     Running     0          8m27s
+monitoring      prometheus-adapter-59df95d9f5-rxcfc         1/1     Running     0          8m26s
+monitoring      prometheus-k8s-0                            2/2     Running     0          8m19s
+monitoring      prometheus-operator-7775c66ccf-562ps        2/2     Running     0          8m35s
+tracing         tempo-0                                     2/2     Running     0          8m18s
+```
 
-# References
+If everything is working fine, you can try to use some examples application to test it.
+
+
+### Remove
+```sh
+./remove.sh
+```
+
+## References
 
 https://github.com/grafana/tns  
 
