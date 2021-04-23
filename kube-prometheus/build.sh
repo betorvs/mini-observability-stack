@@ -20,7 +20,10 @@ rm -rf ${prometheus}/${manifests}
 mkdir -p ${prometheus}/${manifests}/setup
 
 # optional, but we would like to generate yaml, not json
-jsonnet --ext-str customDomain="${DOMAIN}" -J ${prometheus}/vendor -m ${prometheus}/${manifests} ${prometheus}/"${JSONNET}" | xargs -I{} sh -c 'cat {} | gojsontoyaml > {}.yaml; rm -f {}' -- {}
+jsonnet --ext-str customDomain="${DOMAIN}" -J ${prometheus}/vendor -m ${prometheus}/${manifests} ${prometheus}/"${JSONNET}" | xargs -I{} sh -c 'cat {} | gojsontoyaml > {}.yaml' -- {}
+
+# clean up not yaml files
+find ${prometheus}/${manifests} -type f ! -name "*.yaml" | xargs -I{} sh -c 'rm -f {}' -- {}
 
 # patch node exporter daemonset for docker desktop
 patch -p0 ${prometheus}/manifests-example.local/node-exporter-daemonset.yaml <${prometheus}/patch-node-exporter.yaml

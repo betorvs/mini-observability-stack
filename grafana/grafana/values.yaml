@@ -444,8 +444,8 @@ datasources:
         disableMetricsLookup: false
         httpMethod: POST
         exemplarTraceIdDestinations:
-          name: traceID
-          datasourceUid: tempo
+          - name: traceID
+            datasourceUid: tempo
       name: prometheus
       uid: prometheus
       type: prometheus

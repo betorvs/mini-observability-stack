@@ -1,7 +1,11 @@
---- manifests-example.local/node-exporter-daemonset_orig.yaml	2021-04-20 14:45:19.000000000 +0200
-+++ manifests-example.local/node-exporter-daemonset.yaml	2021-04-20 14:45:38.000000000 +0200
-@@ -46,10 +46,10 @@
-           mountPropagation: HostToContainer
+--- manifests-example.local/node-exporter-daemonset.yaml	2021-04-23 13:56:19.000000000 +0200
++++ ../deploy/prometheus/node-exporter-daemonset.yaml	2021-04-23 13:52:42.000000000 +0200
+@@ -43,13 +43,13 @@
+             memory: 180Mi
+         volumeMounts:
+         - mountPath: /host/sys
+-          mountPropagation: HostToContainer
++          # mountPropagation: HostToContainer
            name: sys
            readOnly: true
 -        - mountPath: /host/root

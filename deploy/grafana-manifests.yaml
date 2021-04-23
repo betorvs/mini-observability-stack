@@ -185,7 +185,7 @@ data:
       jsonData:
         disableMetricsLookup: false
         exemplarTraceIdDestinations:
-          datasourceUid: tempo
+        - datasourceUid: tempo
           name: traceID
         httpMethod: POST
       name: prometheus
@@ -320,7 +320,7 @@ spec:
         app.kubernetes.io/name: grafana
         app.kubernetes.io/instance: grafana
       annotations:
-        checksum/config: 8c74f428a42007bfc1bf2b49fb5f03218534e8542c97fcd8b66e76c5ef2209a2
+        checksum/config: 76a558c43650bb6d75adec62bc8491b250cb6b1d49a2866da01d67da141fef39
         checksum/dashboards-json-config: 01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b
         checksum/sc-dashboard-provider-config: 3f39e97f8f83c32d083b03ab66d6e12e6ef894f9809da9414e00ab70b0091081
         checksum/secret: 8d4fc57a5d5d33575bb4697c0f7436e5ed4a49d0a010dc0451fd6008e2072079
