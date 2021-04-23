@@ -6,8 +6,8 @@
   - [Ingress](#ingress)
   - [How to access it](#how-to-access-it)
   - [Apply](#apply)
-- [Examples: hotROD](#examples:-hotrod)
-- [Examples: TNS](#examples:-tns)
+- [Example hotROD](#example-hotrod)
+- [Example TNS](#example-tns)
   - [Explore TNS](#explore-TNS)
     - [Metrics -> Logs -> Traces](#Metrics-->-Logs-->-Traces)
     - [LogQLV2](#LogQLV2)
@@ -72,7 +72,7 @@ monitoring      prometheus-operator-7775c66ccf-562ps        2/2     Running     
 tracing         tempo-0                                     2/2     Running     0          8m18s
 ```
 
-## Examples: hotROD
+## Example hotROD
 
 Deploy it:
 ```
@@ -95,7 +95,7 @@ Access [grafana-local](http://grafana.example.local) and using `admin` and `stro
 
 In Explore: `{namespace="default",container="example-hotrod"}` and search for trace_id in one log line and click on it. Then click on "Tempo" button there.
 
-## Examples: TNS 
+## Example TNS 
 
 Deploy TNS application
 ```sh
