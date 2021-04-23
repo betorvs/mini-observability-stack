@@ -67,7 +67,7 @@ metadata:
 stringData:
   promtail.yaml: "server:\n  log_level: info\n  http_listen_port: 3101\n\nclient:\n
     \ url: http://:@loki.logging.svc.cluster.local:3100/loki/api/v1/push\n  external_labels:\n
-    \   env: dev\n    cluster: local\n  \n\npositions:\n  filename: /run/promtail/positions.yaml\n\nscrape_configs:\n
+    \   env: dev\n    cluster: example.local\n  \n\npositions:\n  filename: /run/promtail/positions.yaml\n\nscrape_configs:\n
     \ # See also https://github.com/grafana/loki/blob/master/production/ksonnet/promtail/scrape_config.libsonnet
     for reference\n  \n  # Pods with a label 'app.kubernetes.io/name'\n  - job_name:
     kubernetes-pods-app-kubernetes-io-name\n    pipeline_stages:\n      - cri: {}\n
@@ -202,7 +202,7 @@ spec:
   template:
     metadata:
       annotations:
-        checksum/config: 33a68b0ae11d56be14b99469d986b13221f5aa642138c5525abaa0b1b39d58ce
+        checksum/config: d14a68182cb5653a297508f2f0f7cc4a24245f88c57ffe249ef9692db0f85248
       labels:
         app.kubernetes.io/instance: promtail
         app.kubernetes.io/name: promtail

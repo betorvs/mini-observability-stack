@@ -32,7 +32,7 @@ stringData:
       url: http://:@loki.logging.svc.cluster.local:3100/loki/api/v1/push
       external_labels:
         env: dev
-        cluster: local
+        cluster: example.local
       
     
     positions:
@@ -423,7 +423,7 @@ spec:
         app.kubernetes.io/name: promtail
         app.kubernetes.io/instance: promtail
       annotations:
-        checksum/config: 33a68b0ae11d56be14b99469d986b13221f5aa642138c5525abaa0b1b39d58ce
+        checksum/config: d14a68182cb5653a297508f2f0f7cc4a24245f88c57ffe249ef9692db0f85248
     spec:
       serviceAccountName: promtail
       securityContext:

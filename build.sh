@@ -16,3 +16,5 @@ helm template --release-name tempo --namespace tracing -f grafana/tempo/values.y
 kustomize build grafana/tempo/ > $DEPLOYDIR/tempo-manifests.yaml
 ./kube-prometheus/build.sh
 cp -r kube-prometheus/manifests-example.local $DEPLOYDIR/prometheus
+mkdir -p $DEPLOYDIR/dashboards
+mv kube-prometheus/dashboards/*.yaml $DEPLOYDIR/dashboards
