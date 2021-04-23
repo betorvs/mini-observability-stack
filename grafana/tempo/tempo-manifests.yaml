@@ -5,7 +5,7 @@ kind: ServiceAccount
 metadata:
   name: tempo
   labels:
-    helm.sh/chart: tempo-0.6.8
+    helm.sh/chart: tempo-0.7.0
     app.kubernetes.io/name: tempo
     app.kubernetes.io/instance: tempo
     app.kubernetes.io/version: "0.6.0"
@@ -18,7 +18,7 @@ metadata:
   name: tempo-query
   namespace: tracing
   labels:
-    helm.sh/chart: tempo-0.6.8
+    helm.sh/chart: tempo-0.7.0
     app.kubernetes.io/name: tempo
     app.kubernetes.io/instance: tempo
     app.kubernetes.io/version: "0.6.0"
@@ -34,7 +34,7 @@ metadata:
   name: tempo
   namespace: tracing
   labels:
-    helm.sh/chart: tempo-0.6.8
+    helm.sh/chart: tempo-0.7.0
     app.kubernetes.io/name: tempo
     app.kubernetes.io/instance: tempo
     app.kubernetes.io/version: "0.6.0"
@@ -84,7 +84,7 @@ metadata:
   name: tempo
   namespace: tracing
   labels:
-    helm.sh/chart: tempo-0.6.8
+    helm.sh/chart: tempo-0.7.0
     app.kubernetes.io/name: tempo
     app.kubernetes.io/instance: tempo
     app.kubernetes.io/version: "0.6.0"
@@ -145,7 +145,7 @@ metadata:
   name: tempo
   namespace: tracing
   labels:
-    helm.sh/chart: tempo-0.6.8
+    helm.sh/chart: tempo-0.7.0
     app.kubernetes.io/name: tempo
     app.kubernetes.io/instance: tempo
     app.kubernetes.io/version: "0.6.0"

@@ -6,7 +6,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: tempo
     app.kubernetes.io/version: 0.6.0
-    helm.sh/chart: tempo-0.6.8
+    helm.sh/chart: tempo-0.7.0
   name: tempo
   namespace: tracing
 ---
@@ -55,7 +55,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: tempo
     app.kubernetes.io/version: 0.6.0
-    helm.sh/chart: tempo-0.6.8
+    helm.sh/chart: tempo-0.7.0
   name: tempo
   namespace: tracing
 ---
@@ -70,7 +70,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: tempo
     app.kubernetes.io/version: 0.6.0
-    helm.sh/chart: tempo-0.6.8
+    helm.sh/chart: tempo-0.7.0
   name: tempo-query
   namespace: tracing
 ---
@@ -82,7 +82,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: tempo
     app.kubernetes.io/version: 0.6.0
-    helm.sh/chart: tempo-0.6.8
+    helm.sh/chart: tempo-0.7.0
   name: tempo
   namespace: tracing
 spec:
@@ -142,7 +142,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: tempo
     app.kubernetes.io/version: 0.6.0
-    helm.sh/chart: tempo-0.6.8
+    helm.sh/chart: tempo-0.7.0
   name: tempo
   namespace: tracing
 spec:
