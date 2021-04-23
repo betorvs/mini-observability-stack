@@ -2,6 +2,7 @@
 
 JSONNET="local.jsonnet"
 DOMAIN="example.local"
+GRAFANA_NAMESPACE="default"
 
 # This script uses arg $1 (name of *.jsonnet file to use) to generate the manifests/*.yaml files.
 
@@ -27,3 +28,14 @@ find ${prometheus}/${manifests} -type f ! -name "*.yaml" | xargs -I{} sh -c 'rm 
 
 # patch node exporter daemonset for docker desktop
 patch -p0 ${prometheus}/manifests-example.local/node-exporter-daemonset.yaml <${prometheus}/patch-node-exporter.yaml
+
+# creating kubernetes-mixin grafana dashboards
+mkdir -p ${prometheus}/dashboards
+jsonnet -J ${prometheus}/vendor -m ${prometheus}/dashboards -e "(import \"kubernetes-mixin/mixin.libsonnet\").grafanaDashboards"
+for file in $( ls ${prometheus}/dashboards/* )
+  do 
+    File=$(basename $file| cut -f1 -d"."| tr -d ' ')
+    quoted_file=$(printf %q "$file" )
+    eval kubectl create cm $File --from-file=${File}.json=$quoted_file -o yaml --dry-run=client --namespace ${GRAFANA_NAMESPACE} |kubectl label -f- --dry-run=client -o yaml --local grafana_dashboard="1" > ${prometheus}/dashboards/${File}.yaml
+    rm -f $file
+  done
