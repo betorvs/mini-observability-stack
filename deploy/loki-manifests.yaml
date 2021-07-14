@@ -6,7 +6,7 @@ metadata:
   name: loki
   labels:
     app: loki
-    chart: loki-2.5.0
+    chart: loki-2.5.2
     heritage: Helm
     release: loki
 spec:
@@ -46,13 +46,14 @@ kind: ServiceAccount
 metadata:
   labels:
     app: loki
-    chart: loki-2.5.0
+    chart: loki-2.5.2
     heritage: Helm
     release: loki
   annotations:
     {}
   name: loki
   namespace: logging
+automountServiceAccountToken: true
 ---
 # Source: loki/templates/secret.yaml
 apiVersion: v1
@@ -62,7 +63,7 @@ metadata:
   namespace: logging
   labels:
     app: loki
-    chart: loki-2.5.0
+    chart: loki-2.5.2
     release: loki
     heritage: Helm
 data:
@@ -76,7 +77,7 @@ metadata:
   namespace: logging
   labels:
     app: loki
-    chart: loki-2.5.0
+    chart: loki-2.5.2
     heritage: Helm
     release: loki
 rules:
@@ -93,7 +94,7 @@ metadata:
   namespace: logging
   labels:
     app: loki
-    chart: loki-2.5.0
+    chart: loki-2.5.2
     heritage: Helm
     release: loki
 roleRef:
@@ -112,7 +113,7 @@ metadata:
   namespace: logging
   labels:
     app: loki
-    chart: loki-2.5.0
+    chart: loki-2.5.2
     release: loki
     heritage: Helm
     variant: headless
@@ -135,7 +136,7 @@ metadata:
   namespace: logging
   labels:
     app: loki
-    chart: loki-2.5.0
+    chart: loki-2.5.2
     release: loki
     heritage: Helm
   annotations:
@@ -159,7 +160,7 @@ metadata:
   namespace: logging
   labels:
     app: loki
-    chart: loki-2.5.0
+    chart: loki-2.5.2
     release: loki
     heritage: Helm
   annotations:
@@ -181,7 +182,7 @@ spec:
         name: loki
         release: loki
       annotations:
-        checksum/config: 4b6885e2e7c6b893ad779491a261a5abff2330131359be8117205748ebd898bf
+        checksum/config: f9c6a8824c87d3b47ab6d48dcacde55fb900626e11a236a2c4ce38e900465a30
         prometheus.io/port: http-metrics
         prometheus.io/scrape: "true"
     spec:

@@ -5,7 +5,7 @@ metadata:
     app.kubernetes.io/component: alert-router
     app.kubernetes.io/name: alertmanager
     app.kubernetes.io/part-of: kube-prometheus
-    app.kubernetes.io/version: 0.21.0
+    app.kubernetes.io/version: 0.22.2
     prometheus: k8s
     role: alert-rules
   name: alertmanager-main-rules
@@ -40,7 +40,7 @@ spec:
           max_over_time(alertmanager_cluster_members{job="alertmanager-main",namespace="monitoring"}[5m])
         < on (namespace,service) group_left
           count by (namespace,service) (max_over_time(alertmanager_cluster_members{job="alertmanager-main",namespace="monitoring"}[5m]))
-      for: 10m
+      for: 15m
       labels:
         severity: critical
     - alert: AlertmanagerFailedToSendAlerts

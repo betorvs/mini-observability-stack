@@ -22,6 +22,22 @@ serviceAccount:
 
 replicas: 1
 
+## Create HorizontalPodAutoscaler object for deployment type
+#
+autoscaling:
+  enabled: false
+#   minReplicas: 1
+#   maxReplicas: 10
+#   metrics:
+#   - type: Resource
+#     resource:
+#       name: cpu
+#       targetAverageUtilization: 60
+#   - type: Resource
+#     resource:
+#       name: memory
+#       targetAverageUtilization: 60
+
 ## See `kubectl explain poddisruptionbudget.spec` for more
 ## ref: https://kubernetes.io/docs/tasks/run-application/configure-pdb/
 podDisruptionBudget: {}
@@ -53,7 +69,7 @@ livenessProbe:
 
 image:
   repository: grafana/grafana
-  tag: 7.5.4
+  tag: 8.0.3
   sha: ""
   pullPolicy: IfNotPresent
 
@@ -106,6 +122,7 @@ downloadDashboardsImage:
 
 downloadDashboards:
   env: {}
+  envFromSecret: ""
   resources: {}
 
 ## Pod Annotations
@@ -124,6 +141,7 @@ podPortName: grafana
 ## ref: http://kubernetes.io/docs/user-guide/services/
 ##
 service:
+  enabled: true
   type: ClusterIP
   port: 80
   targetPort: 3000
@@ -167,6 +185,10 @@ ingress:
     # kubernetes.io/tls-acme: "true"
   labels: {}
   path: /
+
+  # pathType is only for k8s >= 1.1=
+  pathType: Prefix
+  
   hosts:
     - grafana.example.local
   ## Extra paths to prepend to every host configuration. This is useful when working with annotation based services.
@@ -175,6 +197,16 @@ ingress:
   #   backend:
   #     serviceName: ssl-redirect
   #     servicePort: use-annotation
+  ## Or for k8s > 1.19
+  # - path: /*
+  #   pathType: Prefix
+  #   backend:
+  #     service:
+  #       name: ssl-redirect
+  #       port:
+  #         name: service
+
+
   tls: []
   #  - secretName: chart-example-tls
   #    hosts:
@@ -243,6 +275,7 @@ persistence:
   # annotations: {}
   finalizers:
     - kubernetes.io/pvc-protection
+  # selectorLabels: {}
   # subPath: ""
   # existingClaim:
 
@@ -558,6 +591,8 @@ grafana.ini:
   server:
       # The full public facing url you use in browser, used for redirects and emails
     root_url: https://grafana.example.local
+  feature_toggles:
+    enable: ngalert
  # https://grafana.com/docs/grafana/latest/auth/github/#enable-github-in-grafana
  # auth.github:
  #    enabled: false
@@ -614,8 +649,8 @@ smtp:
 ## Requires at least Grafana 5 to work and can't be used together with parameters dashboardProviders, datasources and dashboards
 sidecar:
   image:
-    repository: kiwigrid/k8s-sidecar
-    tag: 1.10.7
+    repository: quay.io/kiwigrid/k8s-sidecar
+    tag: 1.12.2
     sha: ""
   imagePullPolicy: IfNotPresent
   resources: {}

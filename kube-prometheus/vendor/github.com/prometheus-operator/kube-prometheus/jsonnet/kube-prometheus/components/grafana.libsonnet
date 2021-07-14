@@ -3,8 +3,7 @@ local defaults = {
   name: 'grafana',
   namespace: error 'must provide namespace',
   version: error 'must provide version',
-  // image: error 'must provide image',
-  imageRepos: 'grafana/grafana',
+  image: error 'must provide image',
   resources: {
     requests: { cpu: '100m', memory: '100Mi' },
     limits: { cpu: '200m', memory: '200Mi' },
@@ -29,6 +28,7 @@ local defaults = {
   datasources: [],
   config: {},
   plugins: [],
+  env: [],
 };
 
 function(params) {
@@ -44,7 +44,7 @@ function(params) {
         grafana: g._config.version,
       },
       imageRepos+:: {
-        grafana: g._config.imageRepos,
+        grafana: std.split(g._config.image, ':')[0],
       },
       prometheus+:: {
         name: g._config.prometheusName,
@@ -58,6 +58,7 @@ function(params) {
         containers: g._config.containers,
         config+: g._config.config,
         plugins+: g._config.plugins,
+        env: g._config.env,
       } + (
         // Conditionally overwrite default setting.
         if std.length(g._config.datasources) > 0 then

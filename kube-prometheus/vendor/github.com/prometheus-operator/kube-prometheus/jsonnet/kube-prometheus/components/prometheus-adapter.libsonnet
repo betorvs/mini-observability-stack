@@ -22,13 +22,40 @@ local defaults = {
     for labelName in std.objectFields(defaults.commonLabels)
     if !std.setMember(labelName, ['app.kubernetes.io/version'])
   },
+  // Default range intervals are equal to 4 times the default scrape interval.
+  // This is done in order to follow Prometheus rule of thumb with irate().
+  rangeIntervals: {
+    kubelet: '4m',
+    nodeExporter: '4m',
+    windowsExporter: '4m',
+  },
 
   prometheusURL: error 'must provide prometheusURL',
   config: {
     resourceRules: {
       cpu: {
-        containerQuery: 'sum(irate(container_cpu_usage_seconds_total{<<.LabelMatchers>>,container!="",pod!=""}[5m])) by (<<.GroupBy>>)',
-        nodeQuery: 'sum(1 - irate(node_cpu_seconds_total{mode="idle"}[5m]) * on(namespace, pod) group_left(node) node_namespace_pod:kube_pod_info:{<<.LabelMatchers>>}) by (<<.GroupBy>>) or sum (1- irate(windows_cpu_time_total{mode="idle", job="windows-exporter",<<.LabelMatchers>>}[5m])) by (<<.GroupBy>>)',
+        containerQuery: |||
+          sum by (<<.GroupBy>>) (
+            irate (
+                container_cpu_usage_seconds_total{<<.LabelMatchers>>,container!="",pod!=""}[%(kubelet)s]
+            )
+          )
+        ||| % $.rangeIntervals,
+        nodeQuery: |||
+          sum by (<<.GroupBy>>) (
+            1 - irate(
+              node_cpu_seconds_total{mode="idle"}[%(nodeExporter)s]
+            )
+            * on(namespace, pod) group_left(node) (
+              node_namespace_pod:kube_pod_info:{<<.LabelMatchers>>}
+            )
+          )
+          or sum by (<<.GroupBy>>) (
+            1 - irate(
+              windows_cpu_time_total{mode="idle", job="windows-exporter",<<.LabelMatchers>>}[%(windowsExporter)s]
+            )
+          )
+        ||| % $.rangeIntervals,
         resources: {
           overrides: {
             node: { resource: 'node' },
@@ -39,8 +66,23 @@ local defaults = {
         containerLabel: 'container',
       },
       memory: {
-        containerQuery: 'sum(container_memory_working_set_bytes{<<.LabelMatchers>>,container!="",pod!=""}) by (<<.GroupBy>>)',
-        nodeQuery: 'sum(node_memory_MemTotal_bytes{job="node-exporter",<<.LabelMatchers>>} - node_memory_MemAvailable_bytes{job="node-exporter",<<.LabelMatchers>>}) by (<<.GroupBy>>) or sum(windows_cs_physical_memory_bytes{job="windows-exporter",<<.LabelMatchers>>} - windows_memory_available_bytes{job="windows-exporter",<<.LabelMatchers>>}) by (<<.GroupBy>>)',
+        containerQuery: |||
+          sum by (<<.GroupBy>>) (
+            container_memory_working_set_bytes{<<.LabelMatchers>>,container!="",pod!=""}
+          )
+        |||,
+        nodeQuery: |||
+          sum by (<<.GroupBy>>) (
+            node_memory_MemTotal_bytes{job="node-exporter",<<.LabelMatchers>>}
+            -
+            node_memory_MemAvailable_bytes{job="node-exporter",<<.LabelMatchers>>}
+          )
+          or sum by (<<.GroupBy>>) (
+            windows_cs_physical_memory_bytes{job="windows-exporter",<<.LabelMatchers>>}
+            -
+            windows_memory_available_bytes{job="windows-exporter",<<.LabelMatchers>>}
+          )
+        |||,
         resources: {
           overrides: {
             instance: { resource: 'node' },
@@ -53,6 +95,23 @@ local defaults = {
       window: '5m',
     },
   },
+  tlsCipherSuites: [
+    'TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305',
+    'TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305',
+    'TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256',
+    'TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384',
+    'TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256',
+    'TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384',
+    'TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA',
+    'TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256',
+    'TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA',
+    'TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA',
+    'TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA',
+    'TLS_RSA_WITH_AES_128_GCM_SHA256',
+    'TLS_RSA_WITH_AES_256_GCM_SHA384',
+    'TLS_RSA_WITH_AES_128_CBC_SHA',
+    'TLS_RSA_WITH_AES_256_CBC_SHA',
+  ],
 };
 
 function(params) {
@@ -145,6 +204,7 @@ function(params) {
         '--metrics-relist-interval=1m',
         '--prometheus-url=' + pa._config.prometheusURL,
         '--secure-port=6443',
+        '--tls-cipher-suites=' + std.join(',', pa._config.tlsCipherSuites),
       ],
       ports: [{ containerPort: 6443 }],
       volumeMounts: [
@@ -299,5 +359,21 @@ function(params) {
       name: $.serviceAccount.metadata.name,
       namespace: pa._config.namespace,
     }],
+  },
+
+  [if (defaults + params).replicas > 1 then 'podDisruptionBudget']: {
+    apiVersion: 'policy/v1beta1',
+    kind: 'PodDisruptionBudget',
+    metadata: {
+      name: pa._config.name,
+      namespace: pa._config.namespace,
+      labels: pa._config.commonLabels,
+    },
+    spec: {
+      minAvailable: 1,
+      selector: {
+        matchLabels: pa._config.selectorLabels,
+      },
+    },
   },
 }
