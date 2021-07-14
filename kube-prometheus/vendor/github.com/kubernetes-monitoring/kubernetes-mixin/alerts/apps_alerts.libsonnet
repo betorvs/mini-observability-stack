@@ -12,7 +12,9 @@
         rules: [
           {
             expr: |||
-              rate(kube_pod_container_status_restarts_total{%(prefixedNamespaceSelector)s%(kubeStateMetricsSelector)s}[10m]) * 60 * 5 > 0
+              increase(kube_pod_container_status_restarts_total{%(prefixedNamespaceSelector)s%(kubeStateMetricsSelector)s}[10m]) > 0
+              and
+              sum without (phase) (kube_pod_status_phase{phase!="Running",%(prefixedNamespaceSelector)s%(kubeStateMetricsSelector)s} == 1)
             ||| % $._config,
             labels: {
               severity: 'warning',
@@ -68,7 +70,7 @@
             expr: |||
               (
                 kube_deployment_spec_replicas{%(prefixedNamespaceSelector)s%(kubeStateMetricsSelector)s}
-                  !=
+                  >
                 kube_deployment_status_replicas_available{%(prefixedNamespaceSelector)s%(kubeStateMetricsSelector)s}
               ) and (
                 changes(kube_deployment_status_replicas_updated{%(prefixedNamespaceSelector)s%(kubeStateMetricsSelector)s}[10m])
@@ -264,25 +266,25 @@
           },
           {
             expr: |||
-              (kube_hpa_status_desired_replicas{%(prefixedNamespaceSelector)s%(kubeStateMetricsSelector)s}
+              (kube_horizontalpodautoscaler_status_desired_replicas{%(prefixedNamespaceSelector)s%(kubeStateMetricsSelector)s}
                 !=
-              kube_hpa_status_current_replicas{%(prefixedNamespaceSelector)s%(kubeStateMetricsSelector)s})
+              kube_horizontalpodautoscaler_status_current_replicas{%(prefixedNamespaceSelector)s%(kubeStateMetricsSelector)s})
                 and
-              (kube_hpa_status_current_replicas{%(prefixedNamespaceSelector)s%(kubeStateMetricsSelector)s}
+              (kube_horizontalpodautoscaler_status_current_replicas{%(prefixedNamespaceSelector)s%(kubeStateMetricsSelector)s}
                 >
-              kube_hpa_spec_min_replicas{%(prefixedNamespaceSelector)s%(kubeStateMetricsSelector)s})
+              kube_horizontalpodautoscaler_spec_min_replicas{%(prefixedNamespaceSelector)s%(kubeStateMetricsSelector)s})
                 and
-              (kube_hpa_status_current_replicas{%(prefixedNamespaceSelector)s%(kubeStateMetricsSelector)s}
+              (kube_horizontalpodautoscaler_status_current_replicas{%(prefixedNamespaceSelector)s%(kubeStateMetricsSelector)s}
                 <
-              kube_hpa_spec_max_replicas{%(prefixedNamespaceSelector)s%(kubeStateMetricsSelector)s})
+              kube_horizontalpodautoscaler_spec_max_replicas{%(prefixedNamespaceSelector)s%(kubeStateMetricsSelector)s})
                 and
-              changes(kube_hpa_status_current_replicas{%(prefixedNamespaceSelector)s%(kubeStateMetricsSelector)s}[15m]) == 0
+              changes(kube_horizontalpodautoscaler_status_current_replicas{%(prefixedNamespaceSelector)s%(kubeStateMetricsSelector)s}[15m]) == 0
             ||| % $._config,
             labels: {
               severity: 'warning',
             },
             annotations: {
-              description: 'HPA {{ $labels.namespace }}/{{ $labels.hpa }} has not matched the desired number of replicas for longer than 15 minutes.',
+              description: 'HPA {{ $labels.namespace }}/{{ $labels.horizontalpodautoscaler  }} has not matched the desired number of replicas for longer than 15 minutes.',
               summary: 'HPA has not matched descired number of replicas.',
             },
             'for': '15m',
@@ -290,15 +292,15 @@
           },
           {
             expr: |||
-              kube_hpa_status_current_replicas{%(prefixedNamespaceSelector)s%(kubeStateMetricsSelector)s}
+              kube_horizontalpodautoscaler_status_current_replicas{%(prefixedNamespaceSelector)s%(kubeStateMetricsSelector)s}
                 ==
-              kube_hpa_spec_max_replicas{%(prefixedNamespaceSelector)s%(kubeStateMetricsSelector)s}
+              kube_horizontalpodautoscaler_spec_max_replicas{%(prefixedNamespaceSelector)s%(kubeStateMetricsSelector)s}
             ||| % $._config,
             labels: {
               severity: 'warning',
             },
             annotations: {
-              description: 'HPA {{ $labels.namespace }}/{{ $labels.hpa }} has been running at max replicas for longer than 15 minutes.',
+              description: 'HPA {{ $labels.namespace }}/{{ $labels.horizontalpodautoscaler  }} has been running at max replicas for longer than 15 minutes.',
               summary: 'HPA is running at max replicas',
             },
             'for': '15m',

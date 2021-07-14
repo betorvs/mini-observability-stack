@@ -5,8 +5,8 @@ metadata:
     app.kubernetes.io/instance: tempo
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: tempo
-    app.kubernetes.io/version: 0.6.0
-    helm.sh/chart: tempo-0.7.0
+    app.kubernetes.io/version: 1.0.1
+    helm.sh/chart: tempo-0.7.3
   name: tempo
   namespace: tracing
 ---
@@ -54,8 +54,8 @@ metadata:
     app.kubernetes.io/instance: tempo
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: tempo
-    app.kubernetes.io/version: 0.6.0
-    helm.sh/chart: tempo-0.7.0
+    app.kubernetes.io/version: 1.0.1
+    helm.sh/chart: tempo-0.7.3
   name: tempo
   namespace: tracing
 ---
@@ -69,8 +69,8 @@ metadata:
     app.kubernetes.io/instance: tempo
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: tempo
-    app.kubernetes.io/version: 0.6.0
-    helm.sh/chart: tempo-0.7.0
+    app.kubernetes.io/version: 1.0.1
+    helm.sh/chart: tempo-0.7.3
   name: tempo-query
   namespace: tracing
 ---
@@ -81,8 +81,8 @@ metadata:
     app.kubernetes.io/instance: tempo
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: tempo
-    app.kubernetes.io/version: 0.6.0
-    helm.sh/chart: tempo-0.7.0
+    app.kubernetes.io/version: 1.0.1
+    helm.sh/chart: tempo-0.7.3
   name: tempo
   namespace: tracing
 spec:
@@ -141,8 +141,8 @@ metadata:
     app.kubernetes.io/instance: tempo
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: tempo
-    app.kubernetes.io/version: 0.6.0
-    helm.sh/chart: tempo-0.7.0
+    app.kubernetes.io/version: 1.0.1
+    helm.sh/chart: tempo-0.7.3
   name: tempo
   namespace: tracing
 spec:
@@ -164,7 +164,7 @@ spec:
         - -config.file=/conf/tempo.yaml
         - -mem-ballast-size-mbs=1024
         env: null
-        image: grafana/tempo:0.6.0
+        image: grafana/tempo:1.0.1
         imagePullPolicy: IfNotPresent
         name: tempo
         ports:
@@ -198,7 +198,7 @@ spec:
         - --query.base-path=/
         - --grpc-storage-plugin.configuration-file=/conf/tempo-query.yaml
         env: null
-        image: grafana/tempo-query:0.6.0
+        image: grafana/tempo-query:1.0.1
         imagePullPolicy: IfNotPresent
         name: tempo-query
         ports:

@@ -5,10 +5,10 @@ kind: ServiceAccount
 metadata:
   name: tempo
   labels:
-    helm.sh/chart: tempo-0.7.0
+    helm.sh/chart: tempo-0.7.3
     app.kubernetes.io/name: tempo
     app.kubernetes.io/instance: tempo
-    app.kubernetes.io/version: "0.6.0"
+    app.kubernetes.io/version: "1.0.1"
     app.kubernetes.io/managed-by: Helm
 ---
 # Source: tempo/templates/configmap-tempo-query.yaml
@@ -18,10 +18,10 @@ metadata:
   name: tempo-query
   namespace: tracing
   labels:
-    helm.sh/chart: tempo-0.7.0
+    helm.sh/chart: tempo-0.7.3
     app.kubernetes.io/name: tempo
     app.kubernetes.io/instance: tempo
-    app.kubernetes.io/version: "0.6.0"
+    app.kubernetes.io/version: "1.0.1"
     app.kubernetes.io/managed-by: Helm
 data:
   tempo-query.yaml: |
@@ -34,10 +34,10 @@ metadata:
   name: tempo
   namespace: tracing
   labels:
-    helm.sh/chart: tempo-0.7.0
+    helm.sh/chart: tempo-0.7.3
     app.kubernetes.io/name: tempo
     app.kubernetes.io/instance: tempo
-    app.kubernetes.io/version: "0.6.0"
+    app.kubernetes.io/version: "1.0.1"
     app.kubernetes.io/managed-by: Helm
 data:
   overrides.yaml: |
@@ -84,10 +84,10 @@ metadata:
   name: tempo
   namespace: tracing
   labels:
-    helm.sh/chart: tempo-0.7.0
+    helm.sh/chart: tempo-0.7.3
     app.kubernetes.io/name: tempo
     app.kubernetes.io/instance: tempo
-    app.kubernetes.io/version: "0.6.0"
+    app.kubernetes.io/version: "1.0.1"
     app.kubernetes.io/managed-by: Helm
 spec:
   type: ClusterIP
@@ -145,10 +145,10 @@ metadata:
   name: tempo
   namespace: tracing
   labels:
-    helm.sh/chart: tempo-0.7.0
+    helm.sh/chart: tempo-0.7.3
     app.kubernetes.io/name: tempo
     app.kubernetes.io/instance: tempo
-    app.kubernetes.io/version: "0.6.0"
+    app.kubernetes.io/version: "1.0.1"
     app.kubernetes.io/managed-by: Helm
 spec:
   replicas: 1
@@ -169,7 +169,7 @@ spec:
       - args:
         - -config.file=/conf/tempo.yaml
         - -mem-ballast-size-mbs=1024
-        image: grafana/tempo:0.6.0
+        image: grafana/tempo:1.0.1
         imagePullPolicy: IfNotPresent
         name: tempo
         ports:
@@ -204,7 +204,7 @@ spec:
       - args:
         - --query.base-path=/
         - --grpc-storage-plugin.configuration-file=/conf/tempo-query.yaml
-        image: grafana/tempo-query:0.6.0
+        image: grafana/tempo-query:1.0.1
         imagePullPolicy: IfNotPresent
         name: tempo-query
         ports:

@@ -5,10 +5,10 @@ kind: ServiceAccount
 metadata:
   name: promtail
   labels:
-    helm.sh/chart: promtail-3.5.0
+    helm.sh/chart: promtail-3.6.0
     app.kubernetes.io/name: promtail
     app.kubernetes.io/instance: promtail
-    app.kubernetes.io/version: "2.2.0"
+    app.kubernetes.io/version: "2.2.1"
     app.kubernetes.io/managed-by: Helm
 ---
 # Source: promtail/templates/secret.yaml
@@ -17,10 +17,10 @@ kind: Secret
 metadata:
   name: promtail
   labels:
-    helm.sh/chart: promtail-3.5.0
+    helm.sh/chart: promtail-3.6.0
     app.kubernetes.io/name: promtail
     app.kubernetes.io/instance: promtail
-    app.kubernetes.io/version: "2.2.0"
+    app.kubernetes.io/version: "2.2.1"
     app.kubernetes.io/managed-by: Helm
 stringData:
   promtail.yaml: |
@@ -360,10 +360,10 @@ apiVersion: rbac.authorization.k8s.io/v1
 metadata:
   name: promtail
   labels:
-    helm.sh/chart: promtail-3.5.0
+    helm.sh/chart: promtail-3.6.0
     app.kubernetes.io/name: promtail
     app.kubernetes.io/instance: promtail
-    app.kubernetes.io/version: "2.2.0"
+    app.kubernetes.io/version: "2.2.1"
     app.kubernetes.io/managed-by: Helm
 rules:
   - apiGroups:
@@ -385,10 +385,10 @@ apiVersion: rbac.authorization.k8s.io/v1
 metadata:
   name: promtail
   labels:
-    helm.sh/chart: promtail-3.5.0
+    helm.sh/chart: promtail-3.6.0
     app.kubernetes.io/name: promtail
     app.kubernetes.io/instance: promtail
-    app.kubernetes.io/version: "2.2.0"
+    app.kubernetes.io/version: "2.2.1"
     app.kubernetes.io/managed-by: Helm
 subjects:
   - kind: ServiceAccount
@@ -405,10 +405,10 @@ kind: DaemonSet
 metadata:
   name: promtail
   labels:
-    helm.sh/chart: promtail-3.5.0
+    helm.sh/chart: promtail-3.6.0
     app.kubernetes.io/name: promtail
     app.kubernetes.io/instance: promtail
-    app.kubernetes.io/version: "2.2.0"
+    app.kubernetes.io/version: "2.2.1"
     app.kubernetes.io/managed-by: Helm
 spec:
   selector:
@@ -423,7 +423,7 @@ spec:
         app.kubernetes.io/name: promtail
         app.kubernetes.io/instance: promtail
       annotations:
-        checksum/config: d14a68182cb5653a297508f2f0f7cc4a24245f88c57ffe249ef9692db0f85248
+        checksum/config: f25faaca5fcbbc01ac8c62215c9f562b1645ad09b870b7d90ef527549168ec1d
     spec:
       serviceAccountName: promtail
       securityContext:
